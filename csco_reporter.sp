@@ -10,7 +10,7 @@ public Plugin:myinfo =
 {
 	name = "onepointsix reporter",
 	author = "Sovietball",
-	version = "1.0",
+	version = "1.1",
 	description = "Allows CS:CO players to report suspicious gamers for the admins to check.",
 	url = "http://onepointsix.org"
 };
@@ -33,8 +33,6 @@ public OnClientPutInServer(client)
 	
 	GetClientAuthId(client, AuthId_SteamID64, new_client_steamid, sizeof(new_client_steamid));
 	Format(query, sizeof(query), "select steamid from banlist where steamid='%s'", new_client_steamid);
-	
-	PrintToServer(query);
 	
 	if(GetConVarInt(cvar_CheckBanlist) == 1)
 	{
