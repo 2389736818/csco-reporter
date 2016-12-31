@@ -2,8 +2,9 @@
 
 Menu MainMenu = null;
 new Handle:db = INVALID_HANDLE;
-new Handle:g_Cvar_Showmessage = INVALID_HANDLE;
-new Handle:g_Cvar_MessageDelay = INVALID_HANDLE;
+new Handle:cvar_Showmessage = INVALID_HANDLE;
+new Handle:cvar_MessageDelay = INVALID_HANDLE;
+new Handle:cvar_CheckBanlist = INVALID_HANDLE;
 
 public Plugin:myinfo =
 {
@@ -19,14 +20,46 @@ public void OnPluginStart()
 	AutoExecConfig(true, "csgo_reporter");
 	RegConsoleCmd("report", PrintMenu);
 	RegConsoleCmd("sm_report", PrintMenu);
-	//g_Cvar_Showmessage = CreateConVar("sm_showmessage", "1", "Enable welcomemessage");	
-	g_Cvar_MessageDelay = CreateConVar("sm_showmessage_delay", "5.0", "Seconds after join the message is shown in chat");	
+	cvar_Showmessage = CreateConVar("sm_join_showprotectmessage", "1", "Enable welcomemessage");	
+	cvar_MessageDelay = CreateConVar("sm_showmessage_delay", "5.0", "Seconds after join the message is shown in chat");
+	cvar_CheckBanlist = CreateConVar("sm_check_banlist", "1", "Checks if joining client is a hacker, and kick him if that is the case");	
 	SQL_TConnect(MysqlHandler, "onepointsix_report_service");
 }
 
-public OnClientPostAdminCheck(client)
+public OnClientPutInServer(client)
 {
-	CreateTimer (GetConVarFloat(g_Cvar_MessageDelay), MessageHandler, client);
+	new String:new_client_steamid[64];
+	new String:query[256];
+	
+	GetClientAuthId(client, AuthId_SteamID64, new_client_steamid, sizeof(new_client_steamid));
+	Format(query, sizeof(query), "select steamid from banlist where steamid='%s'", new_client_steamid);
+	
+	PrintToServer(query);
+	
+	if(GetConVarInt(cvar_CheckBanlist) == 1)
+	{
+		SQL_TQuery(db, CheckBanHandler, query, client);
+	}
+	
+	if(GetConVarInt(cvar_Showmessage) == 1)
+	{
+		CreateTimer (GetConVarFloat(cvar_MessageDelay), MessageHandler, client);
+	}
+	
+}
+
+public CheckBanHandler(Handle:owner, Handle:h, const String:error[], any:client)
+{
+	new found = SQL_GetRowCount(h);
+	if(found)
+	{
+		new String:name[64];
+		new String:name_format[64];
+		GetClientName(client,name,sizeof(name));
+		Format(name_format,sizeof(name_format),"%s",name);
+		PrintToChatAll("onepointsix.org | We kicked %s because he is hacking.",name);
+		KickClient(client, "onepointsix.org | You got kicked because u are in our hacker banlist. Please visit cheatbuster.onepointsix.org if you are not hacking.");
+	}
 }
 
 public Action:MessageHandler(Handle: timer, any:client)
@@ -61,7 +94,6 @@ public void OnMapEnd()
  
 Menu BuildMenu()
 {
-	/* Create the menu Handle */
 	Menu menu = new Menu(HandlerReport);
 	
 	new String:name[64];
