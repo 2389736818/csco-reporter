@@ -2,6 +2,8 @@
 
 Menu MainMenu = null;
 new Handle:db = INVALID_HANDLE;
+new Handle:g_Cvar_Showmessage = INVALID_HANDLE;
+new Handle:g_Cvar_MessageDelay = INVALID_HANDLE;
 
 public Plugin:myinfo =
 {
@@ -14,9 +16,25 @@ public Plugin:myinfo =
  
 public void OnPluginStart()
 {
+	AutoExecConfig(true, "csgo_reporter");
 	RegConsoleCmd("report", PrintMenu);
 	RegConsoleCmd("sm_report", PrintMenu);
+	//g_Cvar_Showmessage = CreateConVar("sm_showmessage", "1", "Enable welcomemessage");	
+	g_Cvar_MessageDelay = CreateConVar("sm_showmessage_delay", "5.0", "Seconds after join the message is shown in chat");	
 	SQL_TConnect(MysqlHandler, "onepointsix_report_service");
+}
+
+public OnClientPostAdminCheck(client)
+{
+	CreateTimer (GetConVarFloat(g_Cvar_MessageDelay), MessageHandler, client);
+}
+
+public Action:MessageHandler(Handle: timer, any:client)
+{
+	if (IsClientConnected(client) && IsClientInGame(client))
+	{
+		PrintToChat(client, "onepointsix.org | This server is supporting our CS:CO Reporter plugin. Use sm_report in your console to report hackers.");
+	}
 }
 
 public MysqlHandler(Handle:owner, Handle:h, const String:error[], any:data)
