@@ -10,7 +10,7 @@ public Plugin:myinfo =
 {
 	name = "onepointsix reporter",
 	author = "Sovietball",
-	version = "1.1",
+	version = "1.2",
 	description = "Allows CS:CO players to report suspicious gamers for the admins to check.",
 	url = "http://onepointsix.org"
 };
@@ -133,7 +133,7 @@ public BustPlayer(uid,cid){
 	{
 		GetClientAuthId(uid, AuthId_SteamID64, hacker_steamid, sizeof(hacker_steamid));
 		GetClientAuthId(cid, AuthId_SteamID64, client_steamid, sizeof(client_steamid));
-		Format(query, sizeof(query), "insert into reportlist(reporter,hacker) values('%s',%s')", client_steamid, hacker_steamid);
+		Format(query, sizeof(query), "insert into reportlist(reporter,hacker) values('%s','%s')", client_steamid, hacker_steamid);
 		SQL_FastQuery(db, query);
 
 		GetClientName(uid,name,sizeof(name));		
