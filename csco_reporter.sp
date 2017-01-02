@@ -81,7 +81,7 @@ public CheckBanHandler(Handle:owner, Handle:h, const String:error[], any:client)
 		new String:name_format[64];
 		GetClientName(client,name,sizeof(name));
 		Format(name_format,sizeof(name_format),"%s",name);
-		CPrintToChatAll("onepointsix.org | %t", "Kick hacker player.",name);
+		CPrintToChatAll("onepointsix.org | %t", "Kick hacker player",name);
 		KickClient(client, "onepointsix.org | %t", "You got kicked because u are in our hacker banlist. Please visit cheatbuster.onepointsix.org if you are not hacking.");
 	}
 }
@@ -90,7 +90,7 @@ public Action:MessageHandler(Handle: timer, any:client)
 {
 	if (IsClientConnected(client) && IsClientInGame(client))
 	{
-		CPrintToChat(client, "onepointsix.org | %t", "Welcome Message.");
+		CPrintToChat(client, "onepointsix.org | %t", "Welcome Message");
 	}
 }
 
@@ -163,9 +163,9 @@ public BustPlayer(uid,cid){
 		SQL_FastQuery(db, query);
 
 		GetClientName(uid,name,sizeof(name));		
-		CPrintToChat(cid, "onepointsix.org | %t", "successfully reported.", name, hacker_steamid);
+		CPrintToChat(cid, "onepointsix.org | %t", "successfully reported", name, hacker_steamid);
 	} else {
-		CPrintToChat(cid, "onepointsix.org | %t", "You can't report yourself.")
+		CPrintToChat(cid, "onepointsix.org | %t", "You can't report yourself")
 	}
 }
 
