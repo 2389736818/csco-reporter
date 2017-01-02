@@ -27,7 +27,7 @@ public void OnPluginStart()
 	cvar_CheckBanlist = CreateConVar("sm_check_banlist", "1", "Checks if joining client is a hacker, and kick him if that is the case");
 	cvar_SendClientData = CreateConVar("sm_submit_overwatch", "1", "Sends the steamids from the players on your server to the database. Allows Overwatchers to join.");		
 	
-	//you wanted it secret i've mad it secret
+	//you wanted it secret i've made it secret
 	new Handle:kv = CreateKeyValues("sql");
 	KvSetString(kv, "driver", "mysql");
 	KvSetString(kv, "host", "");
