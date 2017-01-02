@@ -1,5 +1,6 @@
 #include <sourcemod>
 #include <sdkhooks>
+#include <kento_csgocolors>
 
 Menu MainMenu = null;
 new Handle:db = INVALID_HANDLE;
@@ -11,12 +12,17 @@ new Handle:cvar_SendClientData = INVALID_HANDLE;
 public Plugin:myinfo =
 {
 	name = "onepointsix reporter",
-	author = "Sovietball",
+	author = "Sovietball Add multiple languages and colors by 2389736818",
 	version = "1.3",
 	description = "Allows CS:CO players to report suspicious gamers for the admins to check.",
 	url = "http://onepointsix.org"
 };
  
+public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max) {
+    MarkNativeAsOptional("GetUserMessageType");
+    return APLRes_Success;
+}
+
 public void OnPluginStart()
 {
 	AutoExecConfig(true, "csgo_reporter");
@@ -26,6 +32,9 @@ public void OnPluginStart()
 	cvar_MessageDelay = CreateConVar("sm_showmessage_delay", "5.0", "Seconds after join the message is shown in chat");
 	cvar_CheckBanlist = CreateConVar("sm_check_banlist", "1", "Checks if joining client is a hacker, and kick him if that is the case");
 	cvar_SendClientData = CreateConVar("sm_submit_overwatch", "1", "Sends the steamids from the players on your server to the database. Allows Overwatchers to join.");		
+	
+	// Load Translations
+	LoadTranslations("csco-reporter.phrases");
 	
 	//you wanted it secret i've made it secret
 	new Handle:kv = CreateKeyValues("sql");
@@ -72,8 +81,8 @@ public CheckBanHandler(Handle:owner, Handle:h, const String:error[], any:client)
 		new String:name_format[64];
 		GetClientName(client,name,sizeof(name));
 		Format(name_format,sizeof(name_format),"%s",name);
-		PrintToChatAll("onepointsix.org | We kicked %s because he is hacking.",name);
-		KickClient(client, "onepointsix.org | You got kicked because u are in our hacker banlist. Please visit cheatbuster.onepointsix.org if you are not hacking.");
+		CPrintToChatAll("onepointsix.org | %t", "Kick hacker player.",name);
+		KickClient(client, "onepointsix.org | %t", "You got kicked because u are in our hacker banlist. Please visit cheatbuster.onepointsix.org if you are not hacking.");
 	}
 }
 
@@ -81,7 +90,7 @@ public Action:MessageHandler(Handle: timer, any:client)
 {
 	if (IsClientConnected(client) && IsClientInGame(client))
 	{
-		PrintToChat(client, "onepointsix.org | This server is supporting our CS:CO Reporter plugin. Use sm_report in your console to report hackers.");
+		CPrintToChat(client, "onepointsix.org | %t", "Welcome Message.");
 	}
 }
 
@@ -125,7 +134,7 @@ Menu BuildMenu()
 		}
 	}
 
-	menu.SetTitle("Report suspicious gamer:");
+	menu.SetTitle("%t", "Report suspicious gamer");
  
 	return menu;
  
@@ -154,9 +163,9 @@ public BustPlayer(uid,cid){
 		SQL_FastQuery(db, query);
 
 		GetClientName(uid,name,sizeof(name));		
-		PrintToChat(cid, "onepointsix.org | You have successfully reported %s (%s).", name, hacker_steamid);
+		CPrintToChat(cid, "onepointsix.org | %t", "successfully reported.", name, hacker_steamid);
 	} else {
-		PrintToChat(cid, "onepointsix.org | You can't report yourself :).");
+		CPrintToChat(cid, "onepointsix.org | %t", "You can't report yourself.")
 	}
 }
 
