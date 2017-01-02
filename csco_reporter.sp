@@ -34,7 +34,7 @@ public void OnPluginStart()
 	cvar_SendClientData = CreateConVar("sm_submit_overwatch", "1", "Sends the steamids from the players on your server to the database. Allows Overwatchers to join.");		
 	
 	// Load Translations
-	LoadTranslations("csco-reporter.phrases");
+	LoadTranslations("csco_reporter.phrases");
 	
 	//you wanted it secret i've made it secret
 	new Handle:kv = CreateKeyValues("sql");
