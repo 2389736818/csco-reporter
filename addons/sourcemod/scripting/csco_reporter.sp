@@ -18,6 +18,11 @@ public Plugin:myinfo =
 	url = "http://onepointsix.org"
 };
  
+public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max) {
+    MarkNativeAsOptional("GetUserMessageType");
+    return APLRes_Success;
+}
+
 public void OnPluginStart()
 {
 	AutoExecConfig(true, "csgo_reporter");
